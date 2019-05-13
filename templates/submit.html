@@ -1,0 +1,27 @@
+{% extends "index.html" %}
+
+{% block map %}
+
+  let tweets = document.getElementById("tweets")
+
+  {% for m in markers %}
+
+    marker = L.marker({{ m.coords }}).bindPopup("<p>" + "{{ m.name }}" + "</p>" + "<p>" + "{{ m.coords }}" + "</p>").addTo(mymap);
+
+    marker.on('click', function(e) {
+    tweets.innerHTML = "";
+    twttr.widgets.createTweet(
+      '{{ m.id }}',
+      tweets,
+      {
+        theme: 'light'
+      }
+    ).then(
+      function( el ) {
+        console.log('Tweet added.');
+      });
+    });
+
+  {% endfor %}
+
+{% endblock %}
