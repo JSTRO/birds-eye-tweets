@@ -20,8 +20,6 @@ def submit():
   auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
   auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 
-  # keyword = request.form.get('submit')
-
   api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True,)
 
   statuses = []
@@ -55,6 +53,8 @@ def submit():
   markers = [MapMarker(s.text, s.place.bounding_box.coordinates[0][0],
                        s.place.full_name, s.id) for s in statuses]
 
+  map_view = request.form.get('submit')
+
   return render_template('./submit.html', markers=markers)
 
 
@@ -64,6 +64,8 @@ class MapMarker(object):
     self.coords = coords[::-1]
     self.name = name
     self.id = id
+
+  # function to get center of bounding box
 
 if __name__ == "__main__":
   app.run(debug=True)

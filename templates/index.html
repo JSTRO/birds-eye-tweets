@@ -37,8 +37,8 @@
 					<hr>
 					<form action="/submit" method="post">
 						<div class="form-group">
-							<label for="number">Number of Results:</label>
-							<select name="number" id="number">
+							<label for="number"><strong>Number of Results: </strong></label>
+							<select class="form-control custom-select" name="number" id="number">
 								<option value="10">10</option>
 								<option value="25">25</option>
 								<option value="50">50</option>
@@ -46,14 +46,25 @@
 							</select>
 						</div>
 						<div class="form-group">
-							<label for="lang">Language:</label>
-							<select name="lang" id="lang">
+							<label for="lang"><strong>Language(s): </strong></label>
+							<select multiple class="form-control custom-select" name="lang" id="lang">
 								<option value="en">English</option>
 								<option value="ja">Japanese</option>
 								<option value="es">Spanish</option>
 								<option value="pt">Portuguese</option>
 								<option value="ar">Arabic</option>
 							</select>
+						</div>
+						<div class="form-group">
+							<label for="options"><strong>View: </strong></label>
+							<div class="btn-group btn-group-toggle" data-toggle="buttons">
+							  <label class="btn btn-light">
+							    <input type="radio" name="options" id="street" checked> Street
+							  </label>
+							  <label class="btn btn-light">
+							    <input type="radio" name="options" id="satellite"> Satellite
+							  </label>
+							</div>
 						</div>
 						<div class="form-group text-center">
 							<button class="btn btn-primary" type="submit">Stream</button>
@@ -78,6 +89,7 @@
 					crossorigin="">
 	</script>
 	<script>
+
 		let mymap = L.map('mapid').setView([0, 0], 1);
 
 		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
