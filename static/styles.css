@@ -13,3 +13,7 @@ hr {
 width: auto;
 display: inline-block;
 }
+
+#tweets {
+  color: gray;
+}

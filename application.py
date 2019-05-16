@@ -1,71 +1,76 @@
-import tweepy
 from flask import Flask, render_template, request
-import geocoder
-import osmapi
-
-CONSUMER_KEY = 'OVu6M4pmuK3DPJSo6XE72GffF'
-CONSUMER_SECRET = '8HlsYKZ4JTIx1hRlSKhJ0J1St3LI2qUsOJwyVUdVlqlgCP67K6'
-ACCESS_TOKEN = '278113459-dq03DbFq0MovpkK9EkxlV4Tf889FYnozLCbGDwk0'
-ACCESS_TOKEN_SECRET = 'tZPrZOhwN5PCWrfMDBwEHt60rwkbuOgMJqpcPbKL6fMcE'
+import tweepy
+import config
 
 app = Flask(__name__)
 
+# Set API keys
+app.consumer_key = config.CONSUMER_KEY
+app.consumer_secret = config.CONSUMER_SECRET
+app.access_token = config.ACCESS_TOKEN
+app.access_token_secret = config.ACCESS_TOKEN_SECRET
+
+# Homepage template
 @app.route("/")
 def home():
   return render_template('index.html')
 
+# Submit template
 @app.route("/submit", methods=['GET', 'POST'])
 def submit():
 
-  auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-  auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+  # OAuth Authentication using Tweepy http://docs.tweepy.org/en/v3.5.0/auth_tutorial.html
+  auth = tweepy.OAuthHandler(app.consumer_key, app.consumer_secret)
+  auth.set_access_token(app.access_token, app.access_token_secret)
 
   api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True,)
-
+  
+  # Empty statuses list which will hold streamed tweets
   statuses = []
 
+  # Open stream listener for Twitter Streaming API http://docs.tweepy.org/en/v3.4.0/streaming_how_to.html
   class MyStreamListener(tweepy.StreamListener):
 
     def __init__(self):
       super().__init__()
-      # self.counter = 0
+      # Set limit for number of tweets streamed
       self.limit = int(request.form.get('number'))
-
+ 
     def on_status(self, status):
-      # print("on status", status.text)
       if len(statuses) < self.limit:
         if status.place is not None:
+          # Only append status to list if status has a place attribute
           statuses.append(status)
       else:
         return False
 
     def on_error(self, status_code):
       if status_code == 420:
-        #returning False in on_data disconnects the stream
+        # Returning False in on_data disconnects the stream
         return False
 
+  # Create stream object
   myStreamListener = MyStreamListener()
 
   myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
 
+  # Filter stream by language and bounding box
   myStream.filter(languages=[str(request.form.get('lang'))], locations=[-180,-90,180,90])
-
+  
+  # Create list of MapMarkers
   markers = [MapMarker(s.text, s.place.bounding_box.coordinates[0][0],
                        s.place.full_name, s.id) for s in statuses]
 
-  map_view = request.form.get('submit')
-
   return render_template('./submit.html', markers=markers)
 
-
+# Custom class which defines relevant properties of the tweet status
 class MapMarker(object):
   def __init__(self, text, coords, name, id):
     self.text = text
     self.coords = coords[::-1]
     self.name = name
     self.id = id
-
-  # function to get center of bounding box
+     
 
 if __name__ == "__main__":
   app.run(debug=True)

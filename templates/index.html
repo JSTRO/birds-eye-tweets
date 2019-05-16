@@ -11,16 +11,15 @@
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
 					integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
 					crossorigin=""/>
-		<!-- custom CSS -->
-		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles.css') }}">
 		<!-- Twitter Widgets -->
 		<script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 		<!-- JQuery -->
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 		<!-- Bootstrap JS -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-
-		<title>Tweets From A Bird's Eye View</title>
+				<!-- custom CSS -->
+		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles.css') }}">
+		<title>Bird's Eye Tweets</title>
 	</head>
 	<body>
 		<div class="container-fluid p-5">
@@ -28,7 +27,7 @@
 				<div class="col-md-3">
 					<div class="row">
 						<div class="col-md-4">
-							<img class="img-fluid mx-auto" src="../static/imgs/twitter4.png" alt="logo">
+							<img class="img-fluid mx-auto" id="logo" src="../static/imgs/twitter4.png" alt="logo">
 						</div>
 						<div class="col-md-8">
 							<h2>Bird's Eye Tweets</h2>
@@ -39,16 +38,16 @@
 						<div class="form-group">
 							<label for="number"><strong>Number of Results: </strong></label>
 							<select class="form-control custom-select" name="number" id="number">
-								<option value="10">10</option>
+								<option selected value="5">5</option>
+								<option value="15">15</option>
 								<option value="25">25</option>
 								<option value="50">50</option>
-								<option value="100">100</option>
 							</select>
 						</div>
 						<div class="form-group">
 							<label for="lang"><strong>Language(s): </strong></label>
 							<select multiple class="form-control custom-select" name="lang" id="lang">
-								<option value="en">English</option>
+								<option selected value="en">English</option>
 								<option value="ja">Japanese</option>
 								<option value="es">Spanish</option>
 								<option value="pt">Portuguese</option>
@@ -56,22 +55,21 @@
 							</select>
 						</div>
 						<div class="form-group">
-							<label for="options"><strong>View: </strong></label>
+							<label for="options"><strong>Map View: </strong></label>
 							<div class="btn-group btn-group-toggle" data-toggle="buttons">
-							  <label class="btn btn-light">
-							    <input type="radio" name="options" id="street" checked> Street
+							  <label class="btn btn-light" id="mapbox.streets">
+							    <input type="radio" name="options" checked> Street
 							  </label>
-							  <label class="btn btn-light">
-							    <input type="radio" name="options" id="satellite"> Satellite
+							  <label class="btn btn-light" id="mapbox.satellite">
+							    <input type="radio" name="options"> Satellite
 							  </label>
 							</div>
 						</div>
 						<div class="form-group text-center">
-							<button class="btn btn-primary" type="submit">Stream</button>
+							<button class="btn btn-primary" type="submit">Fetch Tweets</button>
 						</div>
 					</form>
-					<hr>
-					<div id="tweets">
+					<div id="tweets" style="display: none">
 						<p class="py-5">Click a marker to view a tweet!</p>
 					</div>
 				</div>
@@ -88,18 +86,11 @@
 					integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
 					crossorigin="">
 	</script>
+	<!-- Custom script using Leaflet.js to render map -->
+	<script src="../static/map.js"></script>
+	
 	<script>
-
-		let mymap = L.map('mapid').setView([0, 0], 1);
-
-		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-				attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-				minZoom: 1,
-				maxZoom: 18,
-				id: 'mapbox.streets',
-				accessToken: 'pk.eyJ1IjoianN0cm8iLCJhIjoiY2p2OHc5M3I0MDMzYjN5bm1rN2IwY3JqZSJ9.oOQRV6quXqtCiUkk1ldu8g'
-		}).addTo(mymap);
-
-		{% block map %}{% endblock %}
+	  // Insert script to render map markers on submit
+	  {% block map %}{% endblock %}
 	</script>
 </html>
