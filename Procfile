@@ -1,1 +1,1 @@
-web: gunicorn birds-eye-tweets:app
+web: gunicorn application:app
