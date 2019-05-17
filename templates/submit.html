@@ -1,24 +1,30 @@
 {% extends "index.html" %}
 
+{# Show selection after submit #}
+{% block select %}
+  document.getElementById("number").value = {{ number }};
+  document.getElementById("lang").value = '{{ language }}';
+{% endblock %}
+
 {% block map %}
 
   const tweets = document.getElementById("tweets")
-  
+
   {# Iterate over list of map markers #}
   {% for m in markers %}
-  
+
     {# For each marker, pass coordinates to the marker method and pass the place name and coords to the bindPopup method #}
     marker = L.marker({{ m.coords }}).bindPopup("<p>" + "{{ m.name }}" + "</p>" + "<p>" + "{{ m.coords }}" + "</p>").addTo(mymap);
 
     {# On clicking a marker, display the embedded tweet using the tweet's ID #}
     marker.on('click', function(e) {
       tweets.innerHTML = "";
-      
+
       {# Embed tweet using Embedded Tweet JavaScript Factory Function https://developer.twitter.com/en/docs/twitter-for-websites/embedded-tweets/guides/embedded-tweet-javascript-factory-function.html #}
       twttr.widgets.createTweet
         (
         '{{ m.id }}',
-        tweets, 
+        tweets,
         {
           theme: 'light'
         }
@@ -30,21 +36,7 @@
 
   {% endfor %}
 
-  {# Only shows tweet embed placeholder after a marker is generated #} 
+  {# Only shows tweet embed placeholder after a marker is generated #}
   document.getElementById("tweets").setAttribute("style", "display: block");
-
-  {# Retains the language dropdown menu's selection after Fetch Tweet is clicked #}
-  
-  function retainSelect(id) {
-    let el = document.getElementById(id);
-    el.addEventListener('change', function() {
-      localStorage.setItem("selectVal", this.value);
-    });
-    let val = localStorage.getItem("selectVal");
-    if (val) el.value = val;
-  }
-
-  retainSelect("lang");
-  retainSelect("number");
 
 {% endblock %}

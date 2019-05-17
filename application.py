@@ -28,6 +28,9 @@ def submit():
   # Empty statuses list which will hold streamed tweets
   statuses = []
 
+  # Get number entry
+  number = int(request.form.get('number'))
+
   # Open stream listener for Twitter Streaming API http://docs.tweepy.org/en/v3.4.0/streaming_how_to.html
   class MyStreamListener(tweepy.StreamListener):
 
@@ -49,6 +52,8 @@ def submit():
         # Returning False in on_data disconnects the stream
         return False
 
+  # Get language entry
+  language = str(request.form.get('lang'))
   # Create stream object
   myStreamListener = MyStreamListener()
 
@@ -61,7 +66,7 @@ def submit():
   markers = [MapMarker(s.text, s.place.bounding_box.coordinates[0][0],
                        s.place.full_name, s.id) for s in statuses]
 
-  return render_template('./submit.html', markers=markers)
+  return render_template('./submit.html', markers=markers, number=number, language=language)
 
 # Custom class which defines relevant properties of the tweet status
 class MapMarker(object):

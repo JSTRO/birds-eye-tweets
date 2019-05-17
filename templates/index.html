@@ -38,7 +38,7 @@
 						<div class="form-group">
 							<label for="number"><strong>Number of Results: </strong></label>
 							<select class="form-control custom-select" name="number" id="number">
-								<option selected value="5">5</option>
+								<option value="5">5</option>
 								<option value="15">15</option>
 								<option value="25">25</option>
 								<option value="50">50</option>
@@ -47,7 +47,7 @@
 						<div class="form-group">
 							<label for="lang"><strong>Language(s): </strong></label>
 							<select multiple class="form-control custom-select" name="lang" id="lang">
-								<option selected value="en">English</option>
+								<option value="en">English</option>
 								<option value="ja">Japanese</option>
 								<option value="es">Spanish</option>
 								<option value="pt">Portuguese</option>
@@ -81,6 +81,10 @@
 			View <a href="https://developer.twitter.com/en/developer-terms">Twitter's Developer Terms of Use</a>.
 		</footer>
 	</body>
+	<!-- Script to retain selections after submit -->
+	<script>
+	  {% block select %}{% endblock %}
+	</script>
 	<!-- Leaflet JS -->
 	<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
 					integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
@@ -88,7 +92,7 @@
 	</script>
 	<!-- Custom script using Leaflet.js to render map -->
 	<script src="../static/map.js"></script>
-	
+
 	<script>
 	  // Insert script to render map markers on submit
 	  {% block map %}{% endblock %}
