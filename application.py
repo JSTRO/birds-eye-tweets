@@ -1,14 +1,14 @@
 from flask import Flask, render_template, request
 import tweepy
-import config
+import os
 
 app = Flask(__name__)
 
 # Set API keys
-app.consumer_key = config.CONSUMER_KEY
-app.consumer_secret = config.CONSUMER_SECRET
-app.access_token = config.ACCESS_TOKEN
-app.access_token_secret = config.ACCESS_TOKEN_SECRET
+os.consumer_key = os.environ['CONSUMER_KEY']
+app.consumer_secret = os.environ['CONSUMER_SECRET']
+app.access_token = os.environ['ACCESS_TOKEN']
+app.access_token_secret = os.environ['ACCESS_TOKEN_SECRET']
 
 # Homepage template
 @app.route("/")
@@ -24,7 +24,7 @@ def submit():
   auth.set_access_token(app.access_token, app.access_token_secret)
 
   api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True,)
-  
+
   # Empty statuses list which will hold streamed tweets
   statuses = []
 
@@ -35,7 +35,7 @@ def submit():
       super().__init__()
       # Set limit for number of tweets streamed
       self.limit = int(request.form.get('number'))
- 
+
     def on_status(self, status):
       if len(statuses) < self.limit:
         if status.place is not None:
@@ -56,7 +56,7 @@ def submit():
 
   # Filter stream by language and bounding box
   myStream.filter(languages=[str(request.form.get('lang'))], locations=[-180,-90,180,90])
-  
+
   # Create list of MapMarkers
   markers = [MapMarker(s.text, s.place.bounding_box.coordinates[0][0],
                        s.place.full_name, s.id) for s in statuses]
@@ -70,7 +70,7 @@ class MapMarker(object):
     self.coords = coords[::-1]
     self.name = name
     self.id = id
-     
+
 
 if __name__ == "__main__":
   app.run(debug=True)
